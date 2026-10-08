@@ -16,12 +16,12 @@
     />
     <style>
       :root {
-        --bg: #2020f0;
-        --ink: #0a0a2a;
-        --paper: #f4f1ff;
-        --sun: #ffd60a;
-        --pink: #ff5ca8;
-        --mute: #c9c6ff;
+        --bg: #0b1220;
+        --ink: #060a14;
+        --paper: #e8ecf4;
+        --sun: #8ab4ff;
+        --pink: #c9a56b;
+        --mute: #8d9ab2;
         --d: "Bricolage Grotesque", "Arial Black", sans-serif;
         --b: "Instrument Sans", system-ui, sans-serif;
       }
@@ -262,7 +262,7 @@
         padding: 1rem 0;
         transform: rotate(-1.5deg);
         margin: 2rem -2rem;
-        border-block: 4px solid var(--ink);
+        border-block: 1px solid var(--ink);
       }
       .mq div {
         display: inline-block;
@@ -303,24 +303,20 @@
         gap: 1rem;
       }
       .stats div {
-        background: var(--paper);
-        color: var(--ink);
+        background: #101a2e;
+        border: 1px solid #2a3750;
         padding: 1.2rem;
         border-radius: 1.2rem;
-        transition: transform 0.25s;
-      }
-      .stats div:nth-child(2) {
-        background: var(--pink);
-      }
-      .stats div:nth-child(3) {
-        background: var(--sun);
-      }
-      .stats div:nth-child(4) {
-        background: var(--ink);
-        color: var(--paper);
+        transition:
+          transform 0.25s,
+          border-color 0.25s;
       }
       .stats div:hover {
-        transform: rotate(-3deg) scale(1.04);
+        transform: translateY(-6px);
+        border-color: var(--sun);
+      }
+      .stats b {
+        color: var(--sun);
       }
       .stats b {
         display: block;
@@ -427,9 +423,9 @@
       .out {
         width: 100%;
         min-height: 210px;
-        background: #15154a;
+        background: #101a2e;
         color: var(--paper);
-        border: 2px solid var(--mute);
+        border: 1px solid #2a3750;
         border-radius: 1rem;
         padding: 1rem;
         font: 400 1rem/1.5 var(--b);
@@ -456,7 +452,7 @@
         flex: 1;
         min-width: 200px;
         height: 18px;
-        background: #15154a;
+        background: #101a2e;
         border-radius: 99px;
         overflow: hidden;
       }
@@ -477,24 +473,18 @@
         font: 700 clamp(1rem, 2.4vw, 1.6rem) var(--d);
         padding: 0.5rem 1.2rem;
         border-radius: 99px;
-        background: var(--ink);
+        background: #101a2e;
+        border: 1px solid #2a3750;
         transition:
           transform 0.15s,
           background 0.2s,
           color 0.2s;
         will-change: transform;
       }
-      .chip:nth-child(3n) {
-        background: var(--pink);
-        color: var(--ink);
-      }
-      .chip:nth-child(4n) {
+      .chip:hover {
         background: var(--sun);
         color: var(--ink);
-      }
-      .chip:nth-child(5n) {
-        background: var(--paper);
-        color: var(--ink);
+        border-color: var(--sun);
       }
       /* timeline */
       .tl {
@@ -503,26 +493,20 @@
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       }
       .card {
-        background: var(--paper);
-        color: var(--ink);
+        background: #101a2e;
+        border: 1px solid #2a3750;
         border-radius: 1.5rem;
         padding: 1.5rem;
-        transition: transform 0.3s;
+        transition:
+          transform 0.3s,
+          border-color 0.3s;
       }
-      .card:nth-child(2) {
-        background: var(--sun);
-        transform: rotate(1.2deg);
-      }
-      .card:nth-child(3) {
-        background: var(--pink);
-        transform: rotate(-1.2deg);
-      }
-      .card:nth-child(4) {
-        background: var(--ink);
-        color: var(--paper);
+      .card small {
+        color: var(--pink);
       }
       .card:hover {
-        transform: rotate(0) translateY(-8px);
+        transform: translateY(-8px);
+        border-color: var(--sun);
       }
       .card h3 {
         font-size: 1.7rem;
@@ -531,7 +515,6 @@
       .card small {
         display: block;
         font-weight: 600;
-        opacity: 0.75;
         margin-bottom: 0.6rem;
       }
       .two {
@@ -979,7 +962,7 @@ Hey, could you please kindly help me write a very short summary of https://examp
           vx: 0,
           vy: 0,
           r: 2 + Math.random() * 5,
-          c: ["#ffd60a", "#ff5ca8", "#f4f1ff"][(Math.random() * 3) | 0],
+          c: ["#8ab4ff", "#c9a56b", "#e8ecf4"][(Math.random() * 3) | 0],
         }));
       }
       addEventListener("resize", size);
@@ -1006,11 +989,13 @@ Hey, could you please kindly help me write a very short summary of https://examp
           if (p.x > cv.width) p.x = 0;
           if (p.x < 0) p.x = cv.width;
           if (p.y < 0 || p.y > cv.height) p.vy *= -1;
+          cx.globalAlpha = 0.55;
           cx.fillStyle = p.c;
           cx.beginPath();
           cx.arc(p.x, p.y, p.r, 0, 7);
           cx.fill();
         }
+        cx.globalAlpha = 1;
         requestAnimationFrame(loop);
       })();
       /* name stretches with cursor */
