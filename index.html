@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Arnav Deore · AI & Full-Stack Developer</title>
+    <meta
+      name="description"
+      content="Arnav Deore builds AI-powered apps: RAG pipelines, Flask backends and local-LLM browser tools."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #2020f0;
+        --ink: #0a0a2a;
+        --paper: #f4f1ff;
+        --sun: #ffd60a;
+        --pink: #ff5ca8;
+        --mute: #c9c6ff;
+        --d: "Bricolage Grotesque", "Arial Black", sans-serif;
+        --b: "Instrument Sans", system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--paper);
+        font: 400 1.05rem/1.6 var(--b);
+        overflow-x: hidden;
+        cursor: none;
+      }
+      a,
+      button,
+      textarea,
+      .chip,
+      .proj {
+        cursor: none;
+      }
+      @media (hover: none) {
+        body,
+        a,
+        button,
+        textarea,
+        .chip,
+        .proj {
+          cursor: auto;
+        }
+        .cur {
+          display: none;
+        }
+      }
+      :focus-visible {
+        outline: 3px solid var(--sun);
+        outline-offset: 3px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--d);
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 clamp(1rem, 4vw, 2.5rem);
+      }
+      section {
+        padding: clamp(4rem, 10vw, 8rem) 0;
+      }
+      h2 {
+        font-size: clamp(2.6rem, 8vw, 6.5rem);
+        font-weight: 800;
+        margin-bottom: 2.5rem;
+      }
+      p {
+        max-width: 62ch;
+      }
+      /* cursor + progress */
+      .cur {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--sun);
+        mix-blend-mode: difference;
+        pointer-events: none;
+        z-index: 99;
+        transition:
+          width 0.2s,
+          height 0.2s,
+          margin 0.2s;
+      }
+      .cur.big {
+        width: 70px;
+        height: 70px;
+        margin: -24px 0 0 -24px;
+      }
+      .bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 5px;
+        background: var(--pink);
+        width: 0;
+        z-index: 98;
+      }
+      /* nav */
+      nav {
+        position: fixed;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 50;
+        display: flex;
+        gap: 0.25rem;
+        background: var(--ink);
+        padding: 0.4rem;
+        border-radius: 99px;
+        box-shadow: 0 8px 30px #0006;
+      }
+      nav a {
+        color: var(--paper);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: 99px;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      nav a:hover {
+        background: var(--sun);
+        color: var(--ink);
+      }
+      @media (max-width: 560px) {
+        nav a:nth-child(n + 4) {
+          display: none;
+        }
+      }
+      /* hero */
+      .hero {
+        min-height: 100svh;
+        display: flex;
+        align-items: center;
+        padding-top: 6rem;
+        position: relative;
+      }
+      #fx {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      .hero .wrap {
+        position: relative;
+      }
+      .name {
+        font-size: clamp(4rem, 17vw, 15rem);
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        text-transform: none;
+        font-stretch: 75%;
+        transition: font-variation-settings 0.3s;
+      }
+      .name span {
+        display: block;
+      }
+      .name span + span {
+        color: var(--sun);
+        margin-left: 0.4em;
+      }
+      .prompt {
+        margin-top: 2rem;
+        font-size: clamp(1.05rem, 2.2vw, 1.5rem);
+        max-width: 34ch;
+        min-height: 5.2em;
+        border-left: 5px solid var(--pink);
+        padding-left: 1rem;
+      }
+      .prompt .f {
+        display: inline-block;
+        max-width: 12em;
+        overflow: hidden;
+        white-space: nowrap;
+        vertical-align: bottom;
+        transition:
+          max-width 0.7s ease,
+          opacity 0.7s,
+          color 0.3s;
+        text-decoration: line-through;
+        text-decoration-color: var(--pink);
+      }
+      .prompt.go .f {
+        max-width: 0;
+        opacity: 0;
+      }
+      .meter {
+        margin-top: 1rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        font-weight: 600;
+      }
+      .meter b {
+        font: 800 2.2rem var(--d);
+        color: var(--sun);
+      }
+      .meter button {
+        background: var(--paper);
+        color: var(--ink);
+        border: 0;
+        border-radius: 99px;
+        padding: 0.5rem 1.1rem;
+        font: 600 0.9rem var(--b);
+      }
+      .meter button:hover {
+        background: var(--pink);
+      }
+      .hello {
+        position: absolute;
+        right: clamp(1rem, 4vw, 2.5rem);
+        bottom: -3rem;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: var(--sun);
+        color: var(--ink);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        font: 800 1rem/1.1 var(--d);
+        transform: rotate(-12deg);
+        animation: wob 6s ease-in-out infinite;
+      }
+      @keyframes wob {
+        50% {
+          transform: rotate(8deg) scale(1.06);
+        }
+      }
+      /* marquee */
+      .mq {
+        background: var(--sun);
+        color: var(--ink);
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 1rem 0;
+        transform: rotate(-1.5deg);
+        margin: 2rem -2rem;
+        border-block: 4px solid var(--ink);
+      }
+      .mq div {
+        display: inline-block;
+        font: 800 clamp(1.5rem, 4vw, 2.8rem) var(--d);
+        animation: mq 28s linear infinite;
+      }
+      .mq:hover div {
+        animation-play-state: paused;
+      }
+      @keyframes mq {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      /* about */
+      .about {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 3rem;
+        align-items: start;
+      }
+      @media (max-width: 800px) {
+        .about {
+          grid-template-columns: 1fr;
+        }
+      }
+      .about p {
+        font-size: 1.25rem;
+        margin-bottom: 1.2rem;
+      }
+      .about p strong {
+        background: var(--ink);
+        padding: 0 0.3em;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .stats div {
+        background: var(--paper);
+        color: var(--ink);
+        padding: 1.2rem;
+        border-radius: 1.2rem;
+        transition: transform 0.25s;
+      }
+      .stats div:nth-child(2) {
+        background: var(--pink);
+      }
+      .stats div:nth-child(3) {
+        background: var(--sun);
+      }
+      .stats div:nth-child(4) {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .stats div:hover {
+        transform: rotate(-3deg) scale(1.04);
+      }
+      .stats b {
+        display: block;
+        font: 800 3rem var(--d);
+        letter-spacing: -0.04em;
+      }
+      /* projects */
+      .proj {
+        border-top: 3px solid var(--paper);
+        padding: 1.4rem 0;
+        transition:
+          background 0.3s,
+          color 0.3s,
+          padding 0.3s;
+      }
+      .proj:last-child {
+        border-bottom: 3px solid var(--paper);
+      }
+      .proj:hover,
+      .proj.open {
+        background: var(--paper);
+        color: var(--ink);
+        padding-inline: 1.2rem;
+      }
+      .proj header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .proj h3 {
+        font-size: clamp(2rem, 6vw, 4.6rem);
+        font-weight: 800;
+      }
+      .proj time {
+        font-weight: 600;
+        opacity: 0.8;
+      }
+      .proj .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.8rem;
+      }
+      .tags span {
+        border: 2px solid currentColor;
+        border-radius: 99px;
+        padding: 0.1rem 0.7rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      .proj .more {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.45s ease;
+      }
+      .proj.open .more {
+        grid-template-rows: 1fr;
+      }
+      .more > div {
+        overflow: hidden;
+      }
+      .more ul {
+        margin: 1rem 0 0.4rem 1.1rem;
+      }
+      .more li {
+        margin: 0.35rem 0;
+        max-width: 70ch;
+      }
+      .hint {
+        margin-bottom: 1rem;
+        font-weight: 500;
+        color: var(--mute);
+      }
+      /* lab */
+      .lab {
+        background: var(--ink);
+        border-radius: 2rem;
+        padding: clamp(1.2rem, 4vw, 3rem);
+        border: 4px solid var(--sun);
+      }
+      .lab h2 {
+        font-size: clamp(2.2rem, 6vw, 4.5rem);
+        margin-bottom: 1rem;
+      }
+      .io {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      @media (max-width: 800px) {
+        .io {
+          grid-template-columns: 1fr;
+        }
+      }
+      .io label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+      }
+      textarea,
+      .out {
+        width: 100%;
+        min-height: 210px;
+        background: #15154a;
+        color: var(--paper);
+        border: 2px solid var(--mute);
+        border-radius: 1rem;
+        padding: 1rem;
+        font: 400 1rem/1.5 var(--b);
+        resize: vertical;
+      }
+      .out {
+        background: var(--paper);
+        color: var(--ink);
+        border-color: var(--paper);
+        white-space: pre-wrap;
+      }
+      .score {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-top: 1.2rem;
+        align-items: center;
+      }
+      .score b {
+        font: 800 2.6rem var(--d);
+        color: var(--sun);
+      }
+      .track {
+        flex: 1;
+        min-width: 200px;
+        height: 18px;
+        background: #15154a;
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .track i {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--pink), var(--sun));
+        transition: width 0.4s;
+      }
+      /* skills */
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+      .chip {
+        font: 700 clamp(1rem, 2.4vw, 1.6rem) var(--d);
+        padding: 0.5rem 1.2rem;
+        border-radius: 99px;
+        background: var(--ink);
+        transition:
+          transform 0.15s,
+          background 0.2s,
+          color 0.2s;
+        will-change: transform;
+      }
+      .chip:nth-child(3n) {
+        background: var(--pink);
+        color: var(--ink);
+      }
+      .chip:nth-child(4n) {
+        background: var(--sun);
+        color: var(--ink);
+      }
+      .chip:nth-child(5n) {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      /* timeline */
+      .tl {
+        display: grid;
+        gap: 1.2rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+      .card {
+        background: var(--paper);
+        color: var(--ink);
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        transition: transform 0.3s;
+      }
+      .card:nth-child(2) {
+        background: var(--sun);
+        transform: rotate(1.2deg);
+      }
+      .card:nth-child(3) {
+        background: var(--pink);
+        transform: rotate(-1.2deg);
+      }
+      .card:nth-child(4) {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .card:hover {
+        transform: rotate(0) translateY(-8px);
+      }
+      .card h3 {
+        font-size: 1.7rem;
+        margin-bottom: 0.5rem;
+      }
+      .card small {
+        display: block;
+        font-weight: 600;
+        opacity: 0.75;
+        margin-bottom: 0.6rem;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+      }
+      @media (max-width: 800px) {
+        .two {
+          grid-template-columns: 1fr;
+        }
+      }
+      .two h2 {
+        font-size: clamp(2.2rem, 5vw, 4rem);
+      }
+      .two li {
+        list-style: none;
+        padding: 0.8rem 0;
+        border-bottom: 2px solid #ffffff55;
+      }
+      .two li b {
+        display: block;
+      }
+      .two li span {
+        color: var(--mute);
+      }
+      /* contact */
+      .contact {
+        text-align: center;
+        padding-bottom: 4rem;
+      }
+      .contact h2 {
+        font-size: clamp(3rem, 13vw, 11rem);
+        margin-bottom: 1.5rem;
+      }
+      .mail {
+        display: inline-block;
+        background: var(--sun);
+        color: var(--ink);
+        font: 800 clamp(1.1rem, 3.4vw, 2.2rem) var(--d);
+        padding: 1rem 2rem;
+        border-radius: 99px;
+        text-decoration: none;
+        border: 0;
+        transition:
+          transform 0.2s,
+          background 0.2s;
+      }
+      .mail:hover {
+        background: var(--pink);
+        transform: scale(1.06) rotate(-2deg);
+      }
+      .links {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+      .links a {
+        color: var(--paper);
+        font-weight: 600;
+        text-underline-offset: 6px;
+      }
+      footer {
+        text-align: center;
+        padding: 2rem;
+        color: var(--mute);
+        font-size: 0.9rem;
+      }
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translate(-50%, 120px);
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.8rem 1.4rem;
+        border-radius: 99px;
+        transition: transform 0.3s;
+        z-index: 100;
+        font-weight: 600;
+      }
+      .toast.show {
+        transform: translate(-50%, 0);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cur" aria-hidden="true"></div>
+    <div class="bar" aria-hidden="true"></div>
+    <nav aria-label="Primary">
+      <a href="#top">Home</a><a href="#work">Work</a><a href="#lab">Try it</a
+      ><a href="#skills">Skills</a><a href="#story">Story</a
+      ><a href="#contact">Hire me</a>
+    </nav>
+
+    <header class="hero" id="top">
+      <canvas id="fx" aria-hidden="true"></canvas>
+      <div class="wrap">
+        <h1 class="name" id="name"><span>Arnav</span><span>Deore</span></h1>
+        <p
+          class="prompt"
+          id="prompt"
+          aria-label="I build AI-powered apps that do more with fewer tokens."
+        >
+          <span class="f">So basically, </span>I
+          <span class="f">would really like to say that I </span>build
+          AI-powered apps <span class="f">that, you know, kind of </span>do more
+          with fewer tokens.
+        </p>
+        <div class="meter">
+          <b id="tk">0</b><span id="tkl">tokens saved</span
+          ><button id="replay" type="button">Replay</button>
+        </div>
+      </div>
+      <div class="hello" aria-hidden="true">MCA @<br />CHRIST<br />2026–28</div>
+    </header>
+
+    <div class="mq" aria-hidden="true"><div id="mq"></div></div>
+
+    <section id="about">
+      <div class="wrap about">
+        <div>
+          <h2>Hi, I'm Arnav.</h2>
+          <p>
+            I'm an MCA student at
+            <strong>CHRIST (Deemed to be University)</strong> in Bengaluru, with
+            a BBA in Computer Applications behind me (CGPA 9.02).
+          </p>
+          <p>
+            I build things that talk to language models: retrieval pipelines,
+            Flask backends, and a Chrome extension that runs a local LLM so your
+            prompts never leave your laptop.
+          </p>
+          <p>
+            I learn fastest at hackathons, in research papers, and by shipping.
+            Right now I'm looking for a team where I can do all three on real
+            projects.
+          </p>
+        </div>
+        <div class="stats">
+          <div><b>9.02</b>CGPA in BBA</div>
+          <div><b>3</b>AI projects shipped</div>
+          <div><b>&lt;5s</b>RAG itinerary time</div>
+          <div><b>1</b>paper published</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="wrap">
+        <h2>Things I've built</h2>
+        <p class="hint">Click a project to open it.</p>
+        <article class="proj" tabindex="0" role="button" aria-expanded="false">
+          <header>
+            <h3>Prompt Token Optimizer</h3>
+            <time>September 2026</time>
+          </header>
+          <div class="tags">
+            <span>Chrome MV3</span><span>Ollama</span><span>Local LLM</span
+            ><span>JavaScript</span>
+          </div>
+          <div class="more">
+            <div>
+              <ul>
+                <li>
+                  A privacy-first Chrome extension that shortens your AI prompts
+                  with a local model, so nothing is sent to a third party.
+                </li>
+                <li>
+                  The compression pipeline checks its own work: URLs, numbers,
+                  code blocks, constraints and key instructions survive every
+                  pass.
+                </li>
+                <li>
+                  Shows token-savings analytics, falls back gracefully when the
+                  model is offline, and works on ChatGPT, Claude and Gemini.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </article>
+        <article class="proj" tabindex="0" role="button" aria-expanded="false">
+          <header>
+            <h3>PyBattle</h3>
+            <time>October 2025</time>
+          </header>
+          <div class="tags">
+            <span>Flask</span><span>REST APIs</span><span>MySQL</span>
+          </div>
+          <div class="more">
+            <div>
+              <ul>
+                <li>A competitive coding platform with head-to-head modes.</li>
+                <li>
+                  Backend logic and RESTful APIs in Flask, with score tracking
+                  built into each mode.
+                </li>
+                <li>MySQL stores every player's performance history.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+        <article class="proj" tabindex="0" role="button" aria-expanded="false">
+          <header>
+            <h3>Travel Planner AI</h3>
+            <time>January 2025</time>
+          </header>
+          <div class="tags">
+            <span>RAG</span><span>LangChain</span><span>ChromaDB</span
+            ><span>Gemini</span>
+          </div>
+          <div class="more">
+            <div>
+              <ul>
+                <li>
+                  A RAG pipeline (Flask, LangChain, HuggingFace embeddings,
+                  ChromaDB) that plans itineraries from real, scraped context.
+                </li>
+                <li>
+                  Web scraping feeds a vector store; semantic search pulls the
+                  right places into each plan.
+                </li>
+                <li>
+                  Gemini returns structured JSON plans, and the whole pipeline
+                  answers in under 5 seconds.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="lab">
+      <div class="wrap">
+        <div class="lab">
+          <h2>Try the idea behind it</h2>
+          <p>
+            Paste a wordy prompt. This mini version trims filler and shows what
+            you save. The real extension uses a local LLM and is far smarter.
+          </p>
+          <div class="io">
+            <div>
+              <label for="in">Your prompt</label
+              ><textarea id="in">
+Hey, could you please kindly help me write a very short summary of https://example.com/report in order to share it with my team? I would really like you to make sure to keep the 3 key numbers and basically just be clear.</textarea
+              >
+            </div>
+            <div>
+              <label for="out">Shorter version</label>
+              <div class="out" id="out" aria-live="polite"></div>
+            </div>
+          </div>
+          <div class="score">
+            <b id="pc">0%</b><span id="cnt"></span>
+            <div class="track"><i id="tr"></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="wrap">
+        <h2>My toolbox</h2>
+        <p class="hint">Move your cursor over the chips.</p>
+        <div class="chips" id="chips"></div>
+      </div>
+    </section>
+
+    <section id="story">
+      <div class="wrap">
+        <h2>Story so far</h2>
+        <div class="tl">
+          <div class="card">
+            <small>2026 – 2028</small>
+            <h3>MCA, CHRIST</h3>
+            <p>Master of Computer Applications in Bengaluru.</p>
+          </div>
+          <div class="card">
+            <small>June 2026 – April 2027</small>
+            <h3>Labyrinth</h3>
+            <p>Core committee member, organising technical events at CHRIST.</p>
+          </div>
+          <div class="card">
+            <small>2023 – 2026</small>
+            <h3>BBA, Ashoka Center</h3>
+            <p>Computer Applications in Nashik. CGPA 9.02.</p>
+          </div>
+          <div class="card">
+            <small>January 2024</small>
+            <h3>Indradhanushya</h3>
+            <p>Ran the event end to end and led its Technical Committee.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>Wins</h2>
+          <ul>
+            <li>
+              <b>Finalist, Code Cubicle 5.0 Hackathon</b
+              ><span>International level, Microsoft Office, Bengaluru</span>
+            </li>
+            <li>
+              <b>Published research paper</b
+              ><span
+                >International Journal of Innovative Science and Research
+                Technology</span
+              >
+            </li>
+            <li><b>Presented at ETRD 2025</b><span>Global conference</span></li>
+            <li>
+              <b>Kumbh Mela prototype</b
+              ><span
+                >Avishkar zonal research competition, Savitribai Phule Pune
+                University</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2>Learning</h2>
+          <ul>
+            <li><b>Generative AI Mastermind</b><span>Outskill</span></li>
+            <li>
+              <b>Applied Database System using Oracle AI Database</b
+              ><span>Oracle</span>
+            </li>
+            <li>
+              <b>Exploring SAP Business Technology Platform</b><span>SAP</span>
+            </li>
+            <li>
+              <b>VIOSA Training Program</b
+              ><span>Soft skills and professional development</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="wrap">
+        <h2>Let's build something.</h2>
+        <a
+          class="mail"
+          id="mail"
+          href="mailto:deorearnav.ravindra@mca.christuniversity.in"
+          >Say hello</a
+        >
+        <div class="links">
+          <a
+            href="https://www.linkedin.com/in/arnav-deore"
+            target="_blank"
+            rel="noopener"
+            >LinkedIn</a
+          ><a
+            href="https://github.com/arnavdeore25"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          ><a href="#" id="copy">Copy email</a>
+        </div>
+      </div>
+    </section>
+    <footer>© 2026 Arnav Deore · Bengaluru, India</footer>
+    <div class="toast" id="toast" role="status">Email copied</div>
+
+    <script>
+      const $ = (s) => document.querySelector(s),
+        EMAIL = "deorearnav.ravindra@mca.christuniversity.in";
+      const RM = matchMedia("(prefers-reduced-motion:reduce)").matches;
+      /* cursor, progress */
+      const cur = $(".cur"),
+        bar = $(".bar");
+      addEventListener("pointermove", (e) => {
+        cur.style.transform = `translate(${e.clientX - 11}px,${e.clientY - 11}px)`;
+      });
+      document.addEventListener("pointerover", (e) =>
+        cur.classList.toggle(
+          "big",
+          !!e.target.closest("a,button,.proj,.chip,textarea"),
+        ),
+      );
+      addEventListener(
+        "scroll",
+        () => {
+          bar.style.width =
+            (scrollY / (document.body.scrollHeight - innerHeight)) * 100 + "%";
+        },
+        { passive: true },
+      );
+      /* hero compression */
+      const pr = $("#prompt"),
+        tk = $("#tk");
+      const est = (t) => Math.ceil(t.length / 4);
+      function compress() {
+        const full = [...pr.childNodes].map((n) => n.textContent).join(""),
+          kept = [...pr.childNodes]
+            .filter((n) => n.nodeType == 3 || !n.classList.contains("f"))
+            .map((n) => n.textContent)
+            .join("");
+        const saved = est(full) - est(kept);
+        pr.classList.remove("go");
+        tk.textContent = 0;
+        setTimeout(
+          () => {
+            pr.classList.add("go");
+            let i = 0;
+            const t = setInterval(() => {
+              tk.textContent = Math.min(saved, ++i);
+              if (i >= saved) clearInterval(t);
+            }, 60);
+          },
+          RM ? 0 : 1400,
+        );
+      }
+      $("#replay").onclick = compress;
+      compress();
+      /* hero canvas: particles that flee the cursor */
+      const cv = $("#fx"),
+        cx = cv.getContext("2d");
+      let P = [],
+        mx = -999,
+        my = -999;
+      function size() {
+        cv.width = cv.offsetWidth;
+        cv.height = cv.offsetHeight;
+        P = Array.from({ length: Math.min(90, (cv.width / 12) | 0) }, () => ({
+          x: Math.random() * cv.width,
+          y: Math.random() * cv.height,
+          vx: 0,
+          vy: 0,
+          r: 2 + Math.random() * 5,
+          c: ["#ffd60a", "#ff5ca8", "#f4f1ff"][(Math.random() * 3) | 0],
+        }));
+      }
+      addEventListener("resize", size);
+      size();
+      addEventListener("pointermove", (e) => {
+        const r = cv.getBoundingClientRect();
+        mx = e.clientX - r.left;
+        my = e.clientY - r.top;
+      });
+      (function loop() {
+        cx.clearRect(0, 0, cv.width, cv.height);
+        for (const p of P) {
+          const dx = p.x - mx,
+            dy = p.y - my,
+            d = Math.hypot(dx, dy);
+          if (d < 140 && !RM) {
+            p.vx += (dx / d) * 1.2;
+            p.vy += (dy / d) * 1.2;
+          }
+          p.vx *= 0.93;
+          p.vy *= 0.93;
+          p.x += p.vx + 0.15;
+          p.y += p.vy;
+          if (p.x > cv.width) p.x = 0;
+          if (p.x < 0) p.x = cv.width;
+          if (p.y < 0 || p.y > cv.height) p.vy *= -1;
+          cx.fillStyle = p.c;
+          cx.beginPath();
+          cx.arc(p.x, p.y, p.r, 0, 7);
+          cx.fill();
+        }
+        requestAnimationFrame(loop);
+      })();
+      /* name stretches with cursor */
+      const nm = $("#name");
+      addEventListener("pointermove", (e) => {
+        if (!RM)
+          nm.style.fontStretch = 65 + (e.clientX / innerWidth) * 60 + "%";
+      });
+      /* marquee */
+      const W = [
+        "RAG pipelines",
+        "Local LLMs",
+        "Flask APIs",
+        "Hackathon finalist",
+        "Chrome extensions",
+        "LangChain",
+        "Published researcher",
+        "Java & Python",
+      ];
+      $("#mq").innerHTML = W.map((w) => w + " ✺ ")
+        .join("")
+        .repeat(2);
+      /* projects accordion */
+      document.querySelectorAll(".proj").forEach((p) => {
+        const t = () => {
+          const o = p.classList.toggle("open");
+          p.setAttribute("aria-expanded", o);
+        };
+        p.onclick = t;
+        p.onkeydown = (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            t();
+          }
+        };
+      });
+      /* lab */
+      const FILL = [
+        /\b(hey|hi|hello),?\s*/gi,
+        /\b(could|can) you (please )?(kindly )?/gi,
+        /\b(please|kindly|basically|actually|really|very|just|kind of|you know|simply)\b,?\s*/gi,
+        /\bin order to\b/gi,
+        /\b(I would like you to|I want you to|make sure to)\s*/gi,
+      ];
+      function run() {
+        const a = $("#in").value;
+        let b = a;
+        FILL.forEach(
+          (r, i) =>
+            (b = b.replace(r, i == 3 ? "to" : i == 0 ? "" : i == 1 ? "" : " ")),
+        );
+        b = b
+          .replace(/\s{2,}/g, " ")
+          .replace(/\s+([,.?])/g, "$1")
+          .trim();
+        b = b.charAt(0).toUpperCase() + b.slice(1);
+        const x = est(a),
+          y = est(b),
+          pc = x ? Math.round((1 - y / x) * 100) : 0;
+        $("#out").textContent = b;
+        $("#pc").textContent = pc + "%";
+        $("#cnt").textContent = `${x} → ${y} tokens (estimated)`;
+        $("#tr").style.width = pc + "%";
+      }
+      $("#in").oninput = run;
+      run();
+      /* skills */
+      const S = [
+        "Java",
+        "Python",
+        "C",
+        "C++",
+        "SQL",
+        "JavaScript",
+        "HTML5",
+        "CSS3",
+        "React",
+        "Tailwind CSS",
+        "Flask",
+        "PHP",
+        "REST APIs",
+        "MySQL",
+        "MongoDB",
+        "Oracle",
+        "RAG",
+        "LangChain",
+        "GenAI",
+        "Git",
+        "GitHub",
+        "SAP",
+        "AWS Fundamentals",
+      ];
+      const box = $("#chips");
+      box.innerHTML = S.map((s) => `<span class="chip">${s}</span>`).join("");
+      const chips = [...box.children];
+      if (!RM)
+        box.addEventListener("pointermove", (e) =>
+          chips.forEach((c) => {
+            const r = c.getBoundingClientRect(),
+              dx = e.clientX - (r.left + r.width / 2),
+              dy = e.clientY - (r.top + r.height / 2),
+              d = Math.hypot(dx, dy);
+            c.style.transform =
+              d < 120
+                ? `translate(${((-dx / d) * (120 - d)) / 3}px,${((-dy / d) * (120 - d)) / 3}px) rotate(${dx / 20}deg)`
+                : "";
+          }),
+        );
+      box.addEventListener("pointerleave", () =>
+        chips.forEach((c) => (c.style.transform = "")),
+      );
+      /* contact */
+      $("#copy").onclick = (e) => {
+        e.preventDefault();
+        navigator.clipboard?.writeText(EMAIL);
+        const t = $("#toast");
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 1800);
+      };
+    </script>
+  </body>
+</html>
